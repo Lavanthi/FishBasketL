@@ -1,0 +1,166 @@
+//importing scanner for userinput and Math.random for the orange fishes
+import java.util.Scanner;
+import java.util.Random;
+
+
+public class Game {
+
+    //instance variables for
+    private Fishbowl[][]  fishbowl;// the 2d for the 10x10 fishbowl
+    private int totalBalls; //num of balls player has
+    private String color;  //color of fish
+    private double money; //amount of $$ player has
+
+    //constructor: there is a 10x10 fishbowl, player starts with $5 with total of 20 balls
+    public Game(){
+        this.fishbowl = new Fishbowl[10][10];
+        initFishbowls(); //make sure init the fishbowl and add the rnadom orange fish
+        setRandomOrange();
+        this.money=5;
+        this.totalBalls=20;
+    }
+
+    //sets all the fishes in fishbowl to be either blue or clear plus their price
+    public void initFishbowls(){
+        for(int i=0;i< fishbowl.length;i++){
+            for(int j=0; j<fishbowl[i].length;j++){
+                //even rows will have clear fish while odd rows have bleu fish
+                if(i%2==0){
+                    color = "Clear";
+                }
+                else{
+                    color="Blue";
+                }
+                //gives the price for the fishes-> clear: $2  blue: $6
+                if(color.equals("Clear")){
+                    fishbowl[i][j]=new Fishbowl(color,2.00);
+                }
+                else{
+                    fishbowl[i][j]= new Fishbowl(color,6.00);
+                }
+            }
+        }
+    }
+
+    //randomly set 4 fishes to the color orange
+    public void setRandomOrange(){
+        Random r = new Random();
+
+        for(int i =0;i<4;i++){
+            //these variables wil, take a random row and column from 0-9
+            int row= r.nextInt(10);
+            int column =r.nextInt(10);
+
+            //making sure we don't set the same bowl to orange
+            //this si to only set a fish to ornage if it isn't already
+            if (fishbowl[row][column].getColor().equals("Clear") || fishbowl[row][column].getColor().equals("Blue")) {
+                fishbowl[row][column].setColor("Orange");
+                fishbowl[row][column].setPrice(30.0);
+            }
+        }
+    }
+
+    //this is "toss" a ball into the fishbowl and get the fish
+    public void toss(){
+
+        //we won't allow the user to toss a ball if they ran out of balls to throw
+        if(totalBalls<=0) {
+            System.out.println("Looks like you are out of Ball!!");
+            System.out.println("Your OUT!! GAME OVER");
+            return;
+        }
+
+        //gets a random row and index
+        Random ran = new Random();
+        int r= ran.nextInt(10);
+        int c=ran.nextInt(10);
+
+        //this prints the location(index point) of the fish that got cuaght
+        System.out.println(" ");
+        System.out.println("The ball land in the fishbowl at this position: (" + r + ", "+ c+")");
+
+        //we get the fishbowl objetc and tell the user what color fish they got
+        Fishbowl theBowl = fishbowl[r][c];
+        System.out.println("You caught a " + theBowl.getColor()+ " fish!");
+
+        //depending on the color, we tell the user what award they won along with the fish
+        if(theBowl.getColor().equals("Orange")){
+            System.out.println("CONGRATULATIONS!! NOT ONLY DID YOU GET $30,YOU ALSO WON A GOLDFISH & A BONUS AQUARIUM!!! ");
+        }
+        else if (theBowl.getColor().equals("Clear")){
+            System.out.println("Congrats! You just won $2! WOOOOOOHOOOOOOO");
+        }
+        else{
+            System.out.println("Congrats! You just won $6! WOOOOOOOOOOOOOOOOOHOOOOOOOOO");
+        }
+
+        totalBalls--;// subtracting the amount of ball the user has, after everytime they toss
+    }
+
+    //this method is what lets the player buy more balls
+    public void buyBalls(){
+        Scanner scan = new Scanner(System.in);
+
+        //giving the user the options they can choose
+        System.out.println(" ");
+        System.out.println("Buddy, You have $" + money + " left");
+        System.out.println("1. Buy 3 balls for $1.00");
+        System.out.println("2. Buy 8 balls for $2.00");
+        System.out.println("3. Buy 20 balls for $5.00");
+        System.out.print("Choose your option(1,2 or 3): ");
+        int userinput = scan.nextInt();
+
+        //now we give the user their balss, and rake away some money depending on their choice
+        if (userinput == 1 && money >= 1.00) {
+            money -= 1.00;
+            totalBalls += 3;
+        } else if (userinput == 2 && money >= 2.00) {
+            money -= 2.00;
+            totalBalls += 8;
+        } else if (userinput == 3 && money >= 5.00) {
+            money -= 5.00;
+            totalBalls += 20;
+        } else {
+            System.out.println("BRO DON't BE DELUSION. YOU TOO BROKE TO SPEND THAT MUCH"); // Insufficient funds message
+        }
+    }
+
+    //this is like the introduction to the game, it is the start screen
+    public void playFishBowlGame(){
+        Scanner scan = new Scanner(System.in);
+
+        //will keeps playing until user runs out of balls and money
+        while (totalBalls>0&& money>=1.00){
+            System.out.println("You have "+ totalBalls+ " balls left.");
+            System.out.println("You have $"+ money);
+            System.out.println(" ");
+
+            System.out.println("You have two choices");
+            System.out.println("1. Toss a Ball");
+            System.out.println("2. Buy more Balls");
+            System.out.println("Choose your option(1 or 2): ");
+            int userChoice=scan.nextInt();
+
+            if(userChoice==1){
+                toss();// calls the toss method so user ca get a fisha nd some money
+
+            }
+            if(userChoice==2){
+                buyBalls();// calls buyBalls method so user can buy some ablls
+
+            }
+        }
+        System.out.println("GAME OVER!!!");// will print this when user got no money or balls
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
